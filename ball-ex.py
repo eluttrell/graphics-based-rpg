@@ -22,6 +22,9 @@ class Ball(object):
         if self.y - self.radius < 0:
             self.speed_y = 5
 
+    def render(self, screen):
+        pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), self.radius)
+
 
 def main():
     # declare the size of the canvas
@@ -72,8 +75,7 @@ def main():
         ################################
         # PUT CUSTOM DISPLAY CODE HERE #
         ################################
-
-        pygame.draw.circle(screen, (255, 0, 0), (ball.x, ball.y), ball.radius)
+        ball.render(screen)
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
