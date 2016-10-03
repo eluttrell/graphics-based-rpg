@@ -3,9 +3,10 @@ import pygame
 
 class Ball(object):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, color):
         self.x = x
         self.y = y
+        self.color = color
         self.speed_x = 5
         self.speed_y = 5
         self.radius = 50
@@ -23,7 +24,7 @@ class Ball(object):
             self.speed_y = 5
 
     def render(self, screen):
-        pygame.draw.circle(screen, (255, 0, 0), (self.x, self.y), self.radius)
+        pygame.draw.circle(screen, (self.color), (self.x, self.y), self.radius)
 
 
 def main():
@@ -48,7 +49,13 @@ def main():
     # PUT INITIALIZATION CODE HERE #
     ################################
 
-    ball = Ball(50, 50)
+    ball_list = [
+        Ball(50, 50),
+        Ball(200, 50),
+        Ball(50, 200),
+        Ball(50, 300),
+        Ball(300, 50)
+    ]
 
     # game loop
     stop_game = False
@@ -66,8 +73,8 @@ def main():
         #######################################
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
-
-        ball.update(width, height)
+        for ball in ball_list:
+            ball.update(width, height)
 
         # fill background color
         screen.fill(blue_color)
@@ -75,7 +82,8 @@ def main():
         ################################
         # PUT CUSTOM DISPLAY CODE HERE #
         ################################
-        ball.render(screen)
+        for ball in ball_list:
+            ball.render(screen)
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
