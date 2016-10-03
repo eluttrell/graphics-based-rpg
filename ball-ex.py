@@ -25,6 +25,9 @@ def main():
 
     ball_x = 50
     ball_y = 50
+    ball_speed_x = 5
+    ball_speed_y = 5
+    radius = 50
 
     # game loop
     stop_game = False
@@ -43,8 +46,16 @@ def main():
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
-        ball_x += 5
-        ball_y += 5
+        ball_x += ball_speed_x
+        ball_y += ball_speed_y
+        if ball_x + radius > width:
+            ball_speed_x = -5
+        if ball_y + radius > height:
+            ball_speed_y = -5
+        if ball_x - radius < 0:
+            ball_speed_x = 5
+        if ball_y - radius < 0:
+            ball_speed_y = 5
 
         # fill background color
         screen.fill(blue_color)
@@ -53,7 +64,7 @@ def main():
         # PUT CUSTOM DISPLAY CODE HERE #
         ################################
 
-        pygame.draw.circle(screen, (255, 0, 0), (ball_x, ball_y), 50)
+        pygame.draw.circle(screen, (255, 0, 0), (ball_x, ball_y), radius)
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
