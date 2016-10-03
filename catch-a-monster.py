@@ -4,6 +4,60 @@ import time
 import threading
 
 
+class Monster(object):
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.x_speed = 3
+        self.y_speed = 3
+
+    def render(self, screen):
+        monster_image = pygame.image.load('images/monster.png').convert_alpha()
+        screen.blit(monster_image, (self.x, self.y))
+
+    def stay_on_screen(self, width, height):
+        if self.x > width:
+            self.x = 0
+        if self.x < 0:
+            self.x = 512
+        if self.y > height:
+            self.y = 0
+        if self.y < 0:
+            self.y = 480
+
+    def monster_move(self):
+        self.x += self.x_speed
+        self.y += self.y_speed
+
+    def change_direction(self):
+        direction = random.randint(0, 8)
+        if direction == 0:
+            self.x_speed = 2
+            self.y_speed = 0
+        elif direction == 1:
+            self.x_speed = -2
+            self.y_speed = 0
+        elif direction == 2:
+            self.y_speed = 2
+            self.x_speed = 0
+        elif direction == 3:
+            self.y_speed = -2
+            self.x_speed = 0
+        elif direction == 4:
+            self.y_speed = 2
+            self.x_speed = 2
+        elif direction == 5:
+            self.y_speed = -2
+            self.x_speed = -2
+        elif direction == 6:
+            self.y_speed = 2
+            self.x_speed = -2
+        else:
+            self.y_speed = -2
+            self.x_speed = 2
+
+
 def main():
     # declare the size of the canvas
     width = 512
@@ -26,19 +80,19 @@ def main():
     # PUT INITIALIZATION CODE HERE #
     ################################
 
-    change_dir_countdown = 120
+    change_dir_countdown = 50
 
-    monster_image = pygame.image.load('images/monster.png').convert_alpha()
+    # monster_image = pygame.image.load('images/monster.png').convert_alpha()
+
+    monster = Monster(345, 180)
 
     hero_image = pygame.image.load('images/hero.png').convert_alpha()
 
-    monster_x = 345
-    monster_y = 180
+    # monster_x = 345
+    # monster_y = 180
 
-    loop_counter = 0
-
-    monster_x_speed = 0
-    monster_y_speed = 0
+    # monster_x_speed = 0
+    # monster_y_speed = 0
 
     # game loop
     stop_game = False
@@ -71,35 +125,40 @@ def main():
         ################################
 
         screen.blit(hero_image, (240, 230))
-        screen.blit(monster_image, (monster_x, monster_y))
-        if monster_x > width:
-            monster_x = 0
-        if monster_x < 0:
-            monster_x = 512
-        if monster_y > height:
-            monster_y = 0
-        if monster_y < 0:
-            monster_y = 480
-
-        monster_x += monster_x_speed
-        monster_y += monster_y_speed
-
-        print change_dir_countdown
+        # screen.blit(monster_image, (monster_x, monster_y))
+        monster.render(screen)
+        monster.stay_on_screen(512, 480)
+        monster.monster_move()
         if change_dir_countdown == 0:
-            change_dir_countdown = 120
-            direction = random.randint(0, 3)
-            if direction == 0:
-                monster_x_speed = 2
-                monster_y_speed = 0
-            elif direction == 1:
-                monster_x_speed = -2
-                monster_y_speed = 0
-            elif direction == 2:
-                monster_y_speed = 2
-                monster_x_speed = 0
-            else:
-                monster_y_speed = -2
-                monster_x_speed = 0
+            monster.change_direction()
+            change_dir_countdown = 50
+        # if monster_x > width:
+        #     monster_x = 0
+        # if monster_x < 0:
+        #     monster_x = 512
+        # if monster_y > height:
+        #     monster_y = 0
+        # if monster_y < 0:
+        #     monster_y = 480
+
+        # monster_x += monster_x_speed
+        # monster_y += monster_y_speed
+
+        # if change_dir_countdown == 0:
+        #     change_dir_countdown = 50
+        #     direction = random.randint(0, 3)
+        #     if direction == 0:
+        #         monster_x_speed = 2
+        #         monster_y_speed = 0
+        #     elif direction == 1:
+        #         monster_x_speed = -2
+        #         monster_y_speed = 0
+        #     elif direction == 2:
+        #         monster_y_speed = 2
+        #         monster_x_speed = 0
+        #     else:
+        #         monster_y_speed = -2
+        #         monster_x_speed = 0
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
