@@ -1,6 +1,16 @@
 import pygame
 
 
+class Ball(object):
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.speed_x = 5
+        self.speed_y = 5
+        self.radius = 50
+
+
 def main():
     # declare the size of the canvas
     width = 500
@@ -23,11 +33,7 @@ def main():
     # PUT INITIALIZATION CODE HERE #
     ################################
 
-    ball_x = 50
-    ball_y = 50
-    ball_speed_x = 5
-    ball_speed_y = 5
-    radius = 50
+    ball = Ball(50, 50)
 
     # game loop
     stop_game = False
@@ -46,16 +52,16 @@ def main():
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
-        ball_x += ball_speed_x
-        ball_y += ball_speed_y
-        if ball_x + radius > width:
-            ball_speed_x = -5
-        if ball_y + radius > height:
-            ball_speed_y = -5
-        if ball_x - radius < 0:
-            ball_speed_x = 5
-        if ball_y - radius < 0:
-            ball_speed_y = 5
+        ball.x += ball.speed_x
+        ball.y += ball.speed_y
+        if ball.x + ball.radius > width:
+            ball.speed_x = -5
+        if ball.y + ball.radius > height:
+            ball.speed_y = -5
+        if ball.x - ball.radius < 0:
+            ball.speed_x = 5
+        if ball.y - ball.radius < 0:
+            ball.speed_y = 5
 
         # fill background color
         screen.fill(blue_color)
@@ -64,7 +70,7 @@ def main():
         # PUT CUSTOM DISPLAY CODE HERE #
         ################################
 
-        pygame.draw.circle(screen, (255, 0, 0), (ball_x, ball_y), radius)
+        pygame.draw.circle(screen, (255, 0, 0), (ball.x, ball.y), ball.radius)
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
