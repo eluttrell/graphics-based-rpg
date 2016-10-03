@@ -43,6 +43,9 @@ def main():
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
+        ball_x += 5
+        ball_y += 5
+
         # fill background color
         screen.fill(blue_color)
 
