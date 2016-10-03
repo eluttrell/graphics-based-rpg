@@ -40,15 +40,20 @@ def main():
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
+        hero_image = pygame.image.load('images/hero.png').convert_alpha()
+
         # initialize pygame.display for bacground image
-        image = pygame.image.load('background.png').convert_alpha()
+        background_image = pygame.image.load(
+            'images/background.png').convert_alpha()
 
         # fill background color
-        screen.blit(image, (0, 0))
+        screen.blit(background_image, (0, 0))
 
         ################################
         # PUT CUSTOM DISPLAY CODE HERE #
         ################################
+
+        screen.blit(hero_image, (240, 240))
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
