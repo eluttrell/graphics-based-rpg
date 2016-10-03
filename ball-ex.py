@@ -10,6 +10,18 @@ class Ball(object):
         self.speed_y = 5
         self.radius = 50
 
+    def update(self, width, height):
+        self.x += self.speed_x
+        self.y += self.speed_y
+        if self.x + self.radius > width:
+            self.speed_x = -5
+        if self.y + self.radius > height:
+            self.speed_y = -5
+        if self.x - self.radius < 0:
+            self.speed_x = 5
+        if self.y - self.radius < 0:
+            self.speed_y = 5
+
 
 def main():
     # declare the size of the canvas
@@ -52,16 +64,7 @@ def main():
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
-        ball.x += ball.speed_x
-        ball.y += ball.speed_y
-        if ball.x + ball.radius > width:
-            ball.speed_x = -5
-        if ball.y + ball.radius > height:
-            ball.speed_y = -5
-        if ball.x - ball.radius < 0:
-            ball.speed_x = 5
-        if ball.y - ball.radius < 0:
-            ball.speed_y = 5
+        ball.update(width, height)
 
         # fill background color
         screen.fill(blue_color)
