@@ -1,27 +1,41 @@
 import pygame
+import random
 
 
 class Ball(object):
 
-    def __init__(self, x, y, color):
-        self.x = x
-        self.y = y
-        self.color = color
+    def __init__(self):
+        self.x = random.randrange(499)
+        self.y = random.randrange(499)
+        self.color = (random.randrange(254), random.randrange(
+            254), random.randrange(254))
         self.speed_x = 5
         self.speed_y = 5
-        self.radius = 50
+        self.radius = random.randrange(49)
 
     def update(self, width, height):
         self.x += self.speed_x
         self.y += self.speed_y
         if self.x + self.radius > width:
-            self.speed_x = -5
+            self.speed_x = -random.randrange(5, 31)
+            self.radius = random.randrange(10, 99)
+            self.color = (random.randrange(254), random.randrange(
+                254), random.randrange(254))
         if self.y + self.radius > height:
-            self.speed_y = -5
+            self.speed_y = -random.randrange(5, 31)
+            self.radius = random.randrange(10, 99)
+            self.color = (random.randrange(254), random.randrange(
+                254), random.randrange(254))
         if self.x - self.radius < 0:
-            self.speed_x = 5
+            self.speed_x = random.randrange(5, 31)
+            self.radius = random.randrange(10, 99)
+            self.color = (random.randrange(254), random.randrange(
+                254), random.randrange(254))
         if self.y - self.radius < 0:
-            self.speed_y = 5
+            self.speed_y = random.randrange(5, 31)
+            self.radius = random.randrange(10, 99)
+            self.color = (random.randrange(254), random.randrange(
+                254), random.randrange(254))
 
     def render(self, screen):
         pygame.draw.circle(screen, (self.color), (self.x, self.y), self.radius)
@@ -50,11 +64,11 @@ def main():
     ################################
 
     ball_list = [
-        Ball(50, 50),
-        Ball(200, 50),
-        Ball(50, 200),
-        Ball(50, 300),
-        Ball(300, 50)
+        Ball(),
+        Ball(),
+        Ball(),
+        Ball(),
+        Ball()
     ]
 
     # game loop
