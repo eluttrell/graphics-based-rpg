@@ -7,6 +7,7 @@ KEY_UP = 273
 KEY_DOWN = 274
 KEY_LEFT = 276
 KEY_RIGHT = 275
+ENTER = 13
 
 
 class Move(object):
@@ -40,7 +41,7 @@ class Move(object):
             self.y = screen_height
 
     def change_direction(self):
-        direction = random.randint(0, 8)
+        direction = random.randint(0, 4)
         if direction == 0:
             self.x_speed = random.randint(3, 7)
             self.y_speed = 0
@@ -53,18 +54,6 @@ class Move(object):
         elif direction == 3:
             self.y_speed = -random.randint(3, 7)
             self.x_speed = 0
-        elif direction == 4:
-            self.y_speed = random.randint(3, 7)
-            self.x_speed = random.randint(3, 7)
-        elif direction == 5:
-            self.y_speed = -random.randint(3, 7)
-            self.x_speed = -random.randint(3, 7)
-        elif direction == 6:
-            self.y_speed = random.randint(3, 7)
-            self.x_speed = -random.randint(3, 7)
-        else:
-            self.y_speed = -random.randint(3, 7)
-            self.x_speed = random.randint(3, 7)
 
 
 class Hero(Move):
@@ -97,15 +86,23 @@ class Monster(Move):
 
 class Goblin(Move):
 
-    def __init__(self):
+    def __init__(self, x, y):
         self.x = random.randint(33, 440)
         self.y = random.randint(33, 440)
-        self.x_speed = random.randint(3, 7)
-        self.y_speed = random.randint(3, 7)
+        self.x_speed = x
+        self.y_speed = y
 
     def render(self, screen):
         goblin_image = pygame.image.load('images/goblin.png').convert_alpha()
         screen.blit(goblin_image, (self.x, self.y))
+
+    def change_speed(self, x):
+        self.x_speed = x
+        self.y_speed = x
+
+    # def decrease_speed(self):
+    #     self.x_speed -= 1
+    #     self.y_speed -= 1
 
 
 def main():
@@ -135,6 +132,10 @@ def main():
     # PUT INITIALIZATION CODE HERE #
     ################################
 
+    # game counters
+    win_counter = 0
+    lose_counter = 0
+
     # monster stuff
     change_dir_countdown = 50
     monster = Monster()
@@ -145,15 +146,16 @@ def main():
 
     # goblin stuff
     goblin_list = [
-        Goblin(),
-        Goblin(),
-        Goblin()
+        Goblin(2, 2),
+        Goblin(3, 3),
+        Goblin(4, 4)
     ]
 
     # music
     game_music.play()
 
     # game loop
+    game_over = False
     stop_game = False
     while not stop_game:
         # look through user events fired
@@ -188,12 +190,13 @@ def main():
                 elif event.key == KEY_RIGHT:
                     hero.x_speed = 0
             if event.type == pygame.KEYDOWN:
-                if event.key == 13:
+                if event.key == ENTER:
                     monster.dead = False
                     monster = Monster()
                     hero.dead = False
                     hero = Hero(240, 230)
                     game_music.play()
+                    game_over = False
                 elif event.key == 27:
                     break
 
@@ -236,7 +239,7 @@ def main():
             monster.render(screen)
         elif hero.dead == True:
             monster.render(screen)
-        else:
+        elif monster.dead == True:
             font = pygame.font.Font(None, 25)
             text = font.render(
                 'You Win! Hit ENTER to play again!', True, (0, 0, 0))
@@ -250,26 +253,17 @@ def main():
         # goblin stuff
         for goblin in goblin_list:
             goblin.render(screen)
-        # goblin.render(screen)
-        # goblin2.render(screen)
-        # goblin3.render(screen)
             goblin.loop_across_screen(width, height)
             if change_dir_countdown == 0:
                 goblin.change_direction()
                 change_dir_countdown = 50
-        # goblin2.loop_across_screen(width, height)
-        # if change_dir_countdown == 0:
-        #     goblin.change_direction()
-        #     change_dir_countdown = 50
-        # goblin3.loop_across_screen(width, height)
-        # if change_dir_countdown == 0:
-        #     goblin.change_direction()
-        #     change_dir_countdown = 50
 
         # catch the monster
         if math.hypot(hero.x - monster.x, hero.y - monster.y) <= 32:
             game_music.stop()
             win_sound.play()
+            win_counter += 1
+            game_over = True
             monster.dead = True
 
         # goblin catch hero
@@ -278,6 +272,25 @@ def main():
                 game_music.stop()
                 lose_sound.play()
                 hero.dead = True
+                lose_counter += 1
+                game_over = True
+
+        # win and lose counters
+        gold_counter = win_counter - lose_counter
+        font = pygame.font.Font(None, 25)
+        text = font.render(
+            'Gold: %d' % gold_counter, True, (255, 255, 255))
+        screen.blit(text, (5, 460))
+        speed_increase = gold_counter / 100
+        if speed_increase == 1:
+            for goblin in goblin_list:
+                goblin.change_speed(4)
+        elif speed_increase == 2:
+            for goblin in goblin_list:
+                goblin.change_speed(7)
+        elif speed_increase == 0:
+            for goblin in goblin_list:
+                goblin.change_speed(2)
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
