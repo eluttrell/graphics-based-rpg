@@ -144,9 +144,11 @@ def main():
     hero = Hero(240, 230)
 
     # goblin stuff
-    goblin = Goblin()
-    goblin2 = Goblin()
-    goblin3 = Goblin()
+    goblin_list = [
+        Goblin(),
+        Goblin(),
+        Goblin()
+    ]
 
     # music
     game_music.play()
@@ -201,9 +203,8 @@ def main():
 
         hero.movement()
         monster.movement()
-        goblin.movement()
-        goblin2.movement()
-        goblin3.movement()
+        for goblin in goblin_list:
+            goblin.movement()
 
         change_dir_countdown -= 1
 
@@ -241,27 +242,29 @@ def main():
                 'You Win! Hit ENTER to play again!', True, (0, 0, 0))
             screen.blit(text, (150, 230))
 
-        monster.loop_across_screen(512, 480)
+        monster.loop_across_screen(width, height)
         if change_dir_countdown == 0:
             monster.change_direction()
             change_dir_countdown = 50
 
         # goblin stuff
-        goblin.render(screen)
-        goblin2.render(screen)
-        goblin3.render(screen)
-        goblin.loop_across_screen(512, 480)
-        if change_dir_countdown == 0:
-            goblin.change_direction()
-            change_dir_countdown = 50
-        goblin2.loop_across_screen(512, 480)
-        if change_dir_countdown == 0:
-            goblin.change_direction()
-            change_dir_countdown = 50
-        goblin3.loop_across_screen(512, 480)
-        if change_dir_countdown == 0:
-            goblin.change_direction()
-            change_dir_countdown = 50
+        for goblin in goblin_list:
+            goblin.render(screen)
+        # goblin.render(screen)
+        # goblin2.render(screen)
+        # goblin3.render(screen)
+            goblin.loop_across_screen(width, height)
+            if change_dir_countdown == 0:
+                goblin.change_direction()
+                change_dir_countdown = 50
+        # goblin2.loop_across_screen(width, height)
+        # if change_dir_countdown == 0:
+        #     goblin.change_direction()
+        #     change_dir_countdown = 50
+        # goblin3.loop_across_screen(width, height)
+        # if change_dir_countdown == 0:
+        #     goblin.change_direction()
+        #     change_dir_countdown = 50
 
         # catch the monster
         if math.hypot(hero.x - monster.x, hero.y - monster.y) <= 32:
@@ -270,10 +273,11 @@ def main():
             monster.dead = True
 
         # goblin catch hero
-        if math.hypot(hero.x - goblin.x, hero.y - goblin.y) <= 32 or math.hypot(hero.x - goblin2.x, hero.y - goblin2.y) <= 32 or math.hypot(hero.x - goblin3.x, hero.y - goblin3.y) <= 32:
-            game_music.stop()
-            lose_sound.play()
-            hero.dead = True
+        for goblin in goblin_list:
+            if math.hypot(hero.x - goblin.x, hero.y - goblin.y) <= 32:
+                game_music.stop()
+                lose_sound.play()
+                hero.dead = True
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
