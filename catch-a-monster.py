@@ -9,17 +9,15 @@ KEY_LEFT = 276
 KEY_RIGHT = 275
 
 
-class Hero(object):
+class Move(object):
 
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.x_speed = 0
-        self.y_speed = 0
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
 
-    def render(self, screen):
-        hero_image = pygame.image.load('images/hero.png').convert_alpha()
-        screen.blit(hero_image, (self.x, self.y))
+    def movement(self):
+        self.x += self.x_speed
+        self.y += self.y_speed
 
     def stay_on_screen(self):
         if self.x >= 448:
@@ -31,14 +29,33 @@ class Hero(object):
         if self.y <= 32:
             self.y = 32
 
-    def movement(self):
-        self.x += self.x_speed
-        self.y += self.y_speed
+    def loop_across_screen(self, screen_width, screen_height):
+        if self.x > screen_width:
+            self.x = 0
+        if self.x < 0:
+            self.x = screen_width
+        if self.y > screen_height:
+            self.y = 0
+        if self.y < 0:
+            self.y = screen_height
 
 
-class Monster(object):
+class Hero(Move):
 
     def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.x_speed = 0
+        self.y_speed = 0
+
+    def render(self, screen):
+        hero_image = pygame.image.load('images/hero.png').convert_alpha()
+        screen.blit(hero_image, (self.x, self.y))
+
+
+class Monster(Move):
+
+    def __init__(self):
         self.x = random.randint(33, 440)
         self.y = random.randint(33, 440)
         self.x_speed = random.randint(3, 7)
@@ -48,20 +65,6 @@ class Monster(object):
     def render(self, screen):
         monster_image = pygame.image.load('images/monster.png').convert_alpha()
         screen.blit(monster_image, (self.x, self.y))
-
-    def stay_on_screen(self):
-        if self.x > 512:
-            self.x = 0
-        if self.x < 0:
-            self.x = 512
-        if self.y > 480:
-            self.y = 0
-        if self.y < 0:
-            self.y = 480
-
-    def monster_move(self):
-        self.x += self.x_speed
-        self.y += self.y_speed
 
     def change_direction(self):
         direction = random.randint(0, 8)
@@ -91,6 +94,15 @@ class Monster(object):
             self.x_speed = random.randint(3, 7)
 
 
+class Goblin(Move):
+
+    def __init__(self, x, y):
+        self.x = random.randint(33, 440)
+        self.y = random.randint(33, 440)
+        self.x_speed = random.randint(3, 7)
+        self.y_speed = random.randint(3, 7)
+
+
 def main():
     # declare the size of the canvas
     width = 512
@@ -109,13 +121,18 @@ def main():
     # create a clock
     clock = pygame.time.Clock()
 
+    # sounds for game
+    win_sound = pygame.mixer.Sound('sounds/win.wav')
+    lose_sound = pygame.mixer.Sound('sounds/lose.wav')
+    game_music = pygame.mixer.Sound('sounds/music.wav')
+
     ################################
     # PUT INITIALIZATION CODE HERE #
     ################################
 
     # monster stuff
     change_dir_countdown = 50
-    monster = Monster(345, 180)
+    monster = Monster()
 
     # hero stuff
     # hero_image = pygame.image.load('images/hero.png').convert_alpha()
@@ -158,8 +175,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == 13:
                     monster.dead = False
-                    monster = Monster(random.randint(10, 500),
-                                      random.randint(10, 500))
+                    monster = Monster()
                 elif event.key == 27:
                     break
 
@@ -168,7 +184,7 @@ def main():
         #######################################
 
         hero.movement()
-        monster.monster_move()
+        monster.movement()
 
         change_dir_countdown -= 1
 
@@ -197,13 +213,14 @@ def main():
                 'Hit ENTER to play again!', True, (0, 0, 0))
             screen.blit(text, (150, 230))
 
-        monster.stay_on_screen()
+        monster.loop_across_screen(512, 480)
         if change_dir_countdown == 0:
             monster.change_direction()
             change_dir_countdown = 50
 
         # catch the monster
         if math.hypot(hero.x - monster.x, hero.y - monster.y) <= 32:
+            win_sound.play()
             monster.dead = True
 
         # update the canvas display with the currently drawn frame
