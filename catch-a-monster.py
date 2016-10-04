@@ -39,10 +39,11 @@ class Hero(object):
 class Monster(object):
 
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.x_speed = 6
-        self.y_speed = 6
+        self.x = random.randint(33, 440)
+        self.y = random.randint(33, 440)
+        self.x_speed = random.randint(3, 7)
+        self.y_speed = random.randint(3, 7)
+        self.dead = False
 
     def render(self, screen):
         monster_image = pygame.image.load('images/monster.png').convert_alpha()
@@ -63,32 +64,31 @@ class Monster(object):
         self.y += self.y_speed
 
     def change_direction(self):
-        x = 6
         direction = random.randint(0, 8)
         if direction == 0:
-            self.x_speed = x
+            self.x_speed = random.randint(3, 7)
             self.y_speed = 0
         elif direction == 1:
-            self.x_speed = -x
+            self.x_speed = -random.randint(3, 7)
             self.y_speed = 0
         elif direction == 2:
-            self.y_speed = x
+            self.y_speed = random.randint(3, 7)
             self.x_speed = 0
         elif direction == 3:
-            self.y_speed = -x
+            self.y_speed = -random.randint(3, 7)
             self.x_speed = 0
         elif direction == 4:
-            self.y_speed = x
-            self.x_speed = x
+            self.y_speed = random.randint(3, 7)
+            self.x_speed = random.randint(3, 7)
         elif direction == 5:
-            self.y_speed = -x
-            self.x_speed = -x
+            self.y_speed = -random.randint(3, 7)
+            self.x_speed = -random.randint(3, 7)
         elif direction == 6:
-            self.y_speed = x
-            self.x_speed = -x
+            self.y_speed = random.randint(3, 7)
+            self.x_speed = -random.randint(3, 7)
         else:
-            self.y_speed = -x
-            self.x_speed = x
+            self.y_speed = -random.randint(3, 7)
+            self.x_speed = random.randint(3, 7)
 
 
 def main():
@@ -155,12 +155,20 @@ def main():
                     hero.x_speed = 0
                 elif event.key == KEY_RIGHT:
                     hero.x_speed = 0
+            if event.type == pygame.KEYDOWN:
+                if event.key == 13:
+                    monster.dead = False
+                    monster = Monster(random.randint(10, 500),
+                                      random.randint(10, 500))
+                elif event.key == 27:
+                    break
 
         #######################################
         # PUT LOGIC TO UPDATE GAME STATE HERE #
         #######################################
 
         hero.movement()
+        monster.monster_move()
 
         change_dir_countdown -= 1
 
@@ -181,12 +189,22 @@ def main():
         hero.stay_on_screen()
 
         # monster stuff
-        monster.render(screen)
+        if monster.dead == False:
+            monster.render(screen)
+        else:
+            font = pygame.font.Font(None, 25)
+            text = font.render(
+                'Hit ENTER to play again!', True, (0, 0, 0))
+            screen.blit(text, (150, 230))
+
         monster.stay_on_screen()
-        monster.monster_move()
         if change_dir_countdown == 0:
             monster.change_direction()
             change_dir_countdown = 50
+
+        # catch the monster
+        if math.hypot(hero.x - monster.x, hero.y - monster.y) <= 32:
+            monster.dead = True
 
         # update the canvas display with the currently drawn frame
         pygame.display.update()
