@@ -276,7 +276,7 @@ def main():
                 game_over = True
 
         # win and lose counters
-        gold_counter = win_counter - lose_counter
+        gold_counter = win_counter - lose_counter + 50
         font = pygame.font.Font(None, 25)
         text = font.render(
             'Gold: %d' % gold_counter, True, (255, 255, 255))
